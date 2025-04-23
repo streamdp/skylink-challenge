@@ -80,7 +80,7 @@ func readInput(fileName string) (listNodes nodes, primaryNode string, arrivalPoi
 	return listNodes, primaryNode, arrivalPoints, nil
 }
 
-func dfs(src string, dest []string, graph nodes, path []string, allPaths *[][]string, visited map[string]bool) {
+func dfs(src string, dest []string, listNodes nodes, path []string, allPaths *[][]string, visited map[string]bool) {
 	path = append(path, src)
 	visited[src] = true
 
@@ -88,11 +88,11 @@ func dfs(src string, dest []string, graph nodes, path []string, allPaths *[][]st
 		*allPaths = append(*allPaths, slices.Clone(path))
 	}
 
-	for adjNode := range graph[src] {
+	for adjNode := range listNodes[src] {
 		if visited[adjNode] {
 			continue
 		}
-		dfs(adjNode, dest, graph, path, allPaths, visited)
+		dfs(adjNode, dest, listNodes, path, allPaths, visited)
 	}
 
 	visited[src] = false

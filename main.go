@@ -1,26 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"log"
 )
 
 func main() {
-	listNodes, primaryNode, arrivalPoint, err := readInput("input.log")
+	listNodes, primaryNode, arrivalPoints, err := readInput("input.log")
 	if err != nil {
 		log.Fatal("read input:", err)
 	}
 
-	maxPassengers := 0
-
 	var allPaths [][]string
-	dfs(primaryNode, arrivalPoint, listNodes, []string{}, &allPaths, make(map[string]bool))
-	if count := listNodes.maxPassengersCount(allPaths); maxPassengers < count {
-		maxPassengers = count
-	}
+	dfs(primaryNode, arrivalPoints, listNodes, []string{}, &allPaths, make(map[string]bool))
 
-	fmt.Println(allPaths)
-	fmt.Println(len(allPaths))
-
-	log.Println("maximum number of passengers:", maxPassengers)
+	log.Println("maximum number of passengers:", listNodes.maxPassengersCount(allPaths))
 }
