@@ -20,15 +20,11 @@ func (n nodes) maxPassengersCount(allPath [][]string) int {
 	)
 
 	for _, path := range allPath {
-		minQuota := math.MaxInt
-		for i := 1; i < len(path); i++ {
-			if quota := n[path[i-1]][path[i]]; quota < minQuota {
-				minQuota = quota
-			}
-		}
+		quota := n.minQuota(path)
+
 		tag := path[0] + path[1]
-		if filter[tag] < minQuota {
-			filter[tag] = minQuota
+		if filter[tag] < quota {
+			filter[tag] = quota
 		}
 	}
 
@@ -39,7 +35,18 @@ func (n nodes) maxPassengersCount(allPath [][]string) int {
 	return ret
 }
 
-func readInput(fileName string) (listNodes nodes, primaryNode string, arrivalPoints []string, _ error) {
+func (n nodes) minQuota(path []string) int {
+	ret := math.MaxInt
+	for i := 1; i < len(path); i++ {
+		if quota := n[path[i-1]][path[i]]; quota < ret {
+			ret = quota
+		}
+	}
+
+	return ret
+}
+
+func readInput(fileName string) (nodes, string, []string, error) {
 	f, err := os.OpenInRoot("./", fileName)
 	if err != nil {
 		return nil, "", nil, fmt.Errorf("failed to open file: %w", err)
@@ -51,7 +58,11 @@ func readInput(fileName string) (listNodes nodes, primaryNode string, arrivalPoi
 		}
 	}(f)
 
-	listNodes = make(nodes)
+	var (
+		primaryNode   string
+		arrivalPoints []string
+		listNodes     = make(nodes)
+	)
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
@@ -80,7 +91,7 @@ func readInput(fileName string) (listNodes nodes, primaryNode string, arrivalPoi
 	return listNodes, primaryNode, arrivalPoints, nil
 }
 
-func dfs(src string, dest []string, listNodes nodes, path []string, allPaths *[][]string, visited map[string]bool) {
+func dfsAll(src string, dest []string, listNodes nodes, path []string, allPaths *[][]string, visited map[string]bool) {
 	path = append(path, src)
 	visited[src] = true
 
@@ -88,11 +99,11 @@ func dfs(src string, dest []string, listNodes nodes, path []string, allPaths *[]
 		*allPaths = append(*allPaths, slices.Clone(path))
 	}
 
-	for adjNode := range listNodes[src] {
-		if visited[adjNode] {
+	for adjNode, quota := range listNodes[src] {
+		if quota == 0 || visited[adjNode] {
 			continue
 		}
-		dfs(adjNode, dest, listNodes, path, allPaths, visited)
+		dfsAll(adjNode, dest, listNodes, path, allPaths, visited)
 	}
 
 	visited[src] = false

@@ -11,7 +11,9 @@ func main() {
 	}
 
 	var allPaths [][]string
-	dfs(primaryNode, arrivalPoints, listNodes, []string{}, &allPaths, make(map[string]bool))
+	dfsAll(primaryNode, arrivalPoints, listNodes, []string{}, &allPaths, make(map[string]bool))
 
 	log.Println("maximum number of passengers:", listNodes.maxPassengersCount(allPaths))
+
+	log.Printf("maximum number of passengers (ford fulkerson algorithm): %d", ff(primaryNode, listNodes, arrivalPoints))
 }
