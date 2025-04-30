@@ -1,6 +1,6 @@
 package main
 
-// Fulkerson algorithm implementation
+// Fulkerson algorithm implementation (https://www.thecoder.cafe/p/ford-fulkerson)
 func ff(primaryNode string, listNodes nodes, arrivalPoints []string) int {
 	res := 0
 
